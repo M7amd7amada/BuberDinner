@@ -1,6 +1,8 @@
+using BubberDinner.Application.Common.Interfaces.Authentication;
+
 namespace BubberDinner.Application.Services.Authentication;
 
-public class AuthenticationService : IAuthenticationService
+public class AuthenticationService(IJwtTokenGenerator _jwtTokenGenerator) : IAuthenticationService
 {
     public AuthenticationResult Login(string email, string password)
     {
@@ -16,13 +18,17 @@ public class AuthenticationService : IAuthenticationService
 
     public AuthenticationResult Register(string firstName, string lastName, string email, string password)
     {
+        var userId = Guid.NewGuid();
+
+        var token = _jwtTokenGenerator.GenerateToken(userId, firstName, lastName);
+
         return new AuthenticationResult
         (
-            Guid.NewGuid(),
+            userId,
             firstName,
             lastName,
             email,
-            password
+            token
         );
     }
 }
